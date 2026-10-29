@@ -294,6 +294,10 @@ test("startup loader reads a bounded regular UTF-8 file and rejects symlinks and
     const link = join(directory, "link.json");
     symlinkSync(file, link);
     assert.throws(() => loadModerationStore(link));
+    // Where O_NOFOLLOW is unavailable (Windows), the symlink is still refused.
+    assert.throws(() => loadModerationStore(link, 0), /file type/);
+    assert.throws(() => loadModerationStore(directory, 0), /file type/);
+    assert.ok(loadModerationStore(file, 0));
 
     const corrupt = join(directory, "corrupt.json");
     writeFileSync(corrupt, Buffer.from([0x7b, 0xff, 0x7d]));

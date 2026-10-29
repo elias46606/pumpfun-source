@@ -43,8 +43,10 @@ factory or upstream response informs it.
   character and duplicate addresses reject the whole dataset.
 - `dataSource` is `synthetic` or `local-materialized`. Unknown keys, sparse
   arrays and other schema versions are rejected.
-- The startup loader reads one bounded (8 MiB) regular file, refuses symlinks,
-  and decodes UTF-8 fatally. No reloads, writes or network access.
+- The startup loader reads one bounded (8 MiB) regular file and decodes UTF-8
+  fatally. It refuses symlinks even where `O_NOFOLLOW` is unavailable (Windows):
+  the path is checked with `lstat` and the opened descriptor must match that
+  file's device and inode. No reloads, writes or network access.
 
 ## Response and explicit local boundaries
 
